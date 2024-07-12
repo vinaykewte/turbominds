@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "turbominds-be"
+version = "0.1.0"
+description = ""
+authors = ["vinay"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "<=3.13,>=3.10"
+fastapi = "^0.111.0"
+pydantic = "^2.8.2"
+passlib = "^1.7.4"
+jose = "^1.0.0"
+langchain-groq = "^0.1.6"
+crewai = "^0.36.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
