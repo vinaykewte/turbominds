@@ -12,13 +12,14 @@ def create_brief_dialog(brief_type):
     content = st.text_area("Brief Description")
     if st.button("Submit"):
         st.session_state.create_brief = {"brief_type": brief_type, "content": content}
+        clear_popup()
         st.rerun()
 
-def main():
-    st.set_page_config(page_title="Streamlit Grid Example", page_icon=":star:", layout="centered")
-    
+def show():
     if "popup" not in st.session_state:
         st.session_state["popup"] = None
+    if "create_brief" not in st.session_state:
+        st.session_state["create_brief"] = None
 
     # Custom CSS for consistent button size and center alignment
     st.markdown("""
@@ -64,8 +65,6 @@ def main():
         create_brief_dialog(st.session_state["popup"])
 
     st.write("\n\n")
-    # st.markdown("<h3 class='centered'>Quick Fact</h3>", unsafe_allow_html=True)
     st.write("<div class='centered'>💡 Did you know, 1/3 of all marketing budgets are wasted on bad briefs?</div>", unsafe_allow_html=True)
 
-if __name__ == "__main__":
-    main()
+    return st.session_state.create_brief

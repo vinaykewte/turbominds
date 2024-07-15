@@ -78,8 +78,8 @@ def kickoff_crew(brief_id: str, content: str):
 
 def generate_brief(content:str):
     brief_id = uuid4()
-    thread = Thread(target=kickoff_crew, args=(brief_id, content))
-    thread.start()
+    # thread = Thread(target=kickoff_crew, args=(brief_id, content))
+    # thread.start()
     return ResGenerateBrief(brief_id = brief_id)
 
 # def create_item(db: Session, item: schemas.ItemCreate):
