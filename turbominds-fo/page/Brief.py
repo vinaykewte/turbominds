@@ -1,15 +1,54 @@
 import os
+import asyncio
+import time
+import aiohttp
 import requests
 import streamlit as st
 from components.TopBar import top_bar_with_overlapping_images
 from components import BriefGrid, ProgressBar, BriefResult
-from load_dotenv import load_dotenv
+from dotenv import load_dotenv
 
 load_dotenv()
 
-def show_result():
-    st.write(st.session_state.brief_id)
+# Asynchronous function to show progress bar and poll API
+async def show_progress_bar(brief_id):
+    backend_base_url = os.getenv('BACKEND_BASE_URL')
+    polling_interval = int(os.getenv('POLLING_INTERVAL', 1))  # default to 1 second
+    timeout_duration = int(os.getenv('TIMEOUT_DURATION', 30))  # default to 30 seconds
+    
+    # Show the progress bar
+    st.empty()
+    st.empty()
+    st.empty()
+    asyncio.create_task(ProgressBar.show(brief_id))
 
+    start_time = time.time()
+    async with aiohttp.ClientSession() as session:
+        while True:
+            # Check if timeout duration is reached
+            if time.time() - start_time > timeout_duration:
+                st.error("Timeout reached. Please try again later.")
+                break
+            
+            # Poll the API
+            async with session.get(f"{backend_base_url}/brief/{brief_id}") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    status = data.get("status")
+                    result = data.get("result", {})
+                    
+                    if status == "COMPLETED":
+                        if result:
+                            BriefResult.show(result)
+                        else:
+                            st.error("An error occurred. No data found.")
+                        break
+                else:
+                    st.error(f"Error fetching data: {response.status}")
+            
+            await asyncio.sleep(polling_interval)
+
+# Function to show the brief grid
 def show_brief_grid():
     form_data = BriefGrid.show()
     if form_data:
@@ -19,19 +58,10 @@ def show_brief_grid():
             brief_id = res.json().get("brief_id")
             # Store the brief_id in session state
             st.session_state.brief_id = brief_id
-            show_result()
-            st.rerun()
+            st.experimental_rerun()
 
-
-def show_progress_bar(brief_id):
-    st.empty()
-    st.empty()
-    st.empty()
-    ProgressBar.show(brief_id)
-
-
+# Main function to control the flow of the application
 def show():
-#    st.set_page_config(page_title="Streamlit Grid Example", page_icon=":star:", layout="centered")
     top_bar_with_overlapping_images(
         [
             'https://img.freepik.com/free-photo/young-bearded-man-with-white-t-shirt_273609-6624.jpg',
@@ -43,11 +73,7 @@ def show():
     if 'brief_id' not in st.session_state:
         show_brief_grid()
     if 'brief_id' in st.session_state:
-        show_progress_bar(st.session_state.brief_id)
-    
-        
-    # elif st.session_state.brief_content and st.session_state.brief_result:
-    #     BriefResult.show()
+        asyncio.run(show_progress_bar(st.session_state.brief_id))
 
 if __name__ == "__main__":
     show()
