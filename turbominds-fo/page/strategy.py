@@ -1,19 +1,55 @@
-# pages/brief.py
+import os
+import requests
 import streamlit as st
-from state.session_state import get_brief_class
+from components.TopBar import top_bar_with_overlapping_images
+from components.Strategy import StrategyGrid, StrategyResult
+from components import ProgressBar
+from load_dotenv import load_dotenv
+
+load_dotenv()
+
+def show_result():
+    st.write(st.session_state.strategy_id)
+
+def show_strategy_grid():
+    form_data = StrategyGrid.show()
+    if form_data:
+        # Make the API call with form data
+        res = requests.post(f"{os.getenv('BACKEND_BASE_URL')}/strategy", json=form_data)
+        if res.status_code == 200:
+            strategy_id = res.json().get("strategy_id")
+            # Store the strategy_id in session state
+            st.session_state.strategy_id = strategy_id
+            show_result()
+            st.rerun()
+
+
+def show_progress_bar(strategy_id):
+    st.empty()
+    st.empty()
+    st.empty()
+    ProgressBar.show(strategy_id)
+
 
 def show():
-    brief_state = get_brief_class()
+#    st.set_page_config(page_title="Streamlit Grid Example", page_icon=":star:", layout="centered")
+    top_bar_with_overlapping_images(
+        [
+            'https://img.freepik.com/free-photo/young-bearded-man-with-white-t-shirt_273609-6624.jpg',
+            'https://img.freepik.com/premium-vector/portrait-indian-traditional-style-beautiful-girl-face-avatar-vector-illustration_55610-7346.jpg'
+        ], 
+        "Strategy Agents"
+    )
 
-    st.title("Creative Page")
-    st.write("This is the Brief page.")
-    st.write(brief_state.get_brief_info())
+    if 'strategy_id' not in st.session_state:
+        show_strategy_grid()
+    if 'strategy_id' in st.session_state:
+        show_progress_bar(st.session_state.strategy_id)
+    
+        
+    # elif st.session_state.strategy_content and st.session_state.strategy_result:
+    #     strategyResult.show()
 
-    if st.button("Update Brief Strategy Results"):
-        brief_state.update_strategy_result({
-            'name': 'John Doe',
-            'description': 'A creative strategy for the project'
-        })
-
-
+if __name__ == "__main__":
+    show()
 

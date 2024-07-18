@@ -3,8 +3,8 @@ from streamlit_option_menu import option_menu
 
 # Sidebar menu
 with st.sidebar:
-    selected = option_menu("Turbo Minds", ["Brief", 'Research', 'Strategy', 'Creative', 'Design'], 
-        icons=['journal', 'search', 'calendar3-event', 'palette-fill', 'card-image'], menu_icon="fire",default_index=0)
+    selected = option_menu("Turbo Minds", ["Brief", 'Research', 'Strategy', 'Design', 'My File'], 
+        icons=['journal', 'search', 'calendar3-event', 'card-image', 'palette-fill'], menu_icon="fire",default_index=0)
 
 # Define a function to load the appropriate page
 def load_page(selected_option):
@@ -14,10 +14,10 @@ def load_page(selected_option):
         import page.research as page
     elif selected_option == "Strategy":
         import page.strategy as page
-    elif selected_option == "Creative":
-        import page.creative as page
     elif selected_option == "Design":
         import page.design as page
+    elif selected_option == "My File":
+        import page.myfile as page
     else:
         st.error("Page not found")
         return
