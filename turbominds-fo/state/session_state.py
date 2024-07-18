@@ -5,8 +5,9 @@ brief_class = None
 
 def get_brief_class():
     global brief_class
-    if brief_class is None:
-        brief_class = Brief_State("EXAMPOEL")
-        return brief_class
-    else:
-        return brief_class
+    return brief_class
+
+def create_brief_class(title):
+    global brief_class
+    brief_class = Brief_State(id=1, title=title)
+    return brief_class

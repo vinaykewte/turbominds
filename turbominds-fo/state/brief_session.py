@@ -1,8 +1,8 @@
 class Brief_State():
 
-    def __init__(self,title):
-        self.brief_id = None
-        self.brief_title = title
+    def __init__(self, id, title):
+        self.id = id
+        self.title = title
         self.brief_result = None
         self.research_result = None
         self.stategy_result = None
