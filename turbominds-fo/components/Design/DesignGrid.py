@@ -1,5 +1,5 @@
 import streamlit as st
-
+from state.session_state import get_brief_class
 def show_popup(button_text):
     st.session_state["popup"] = button_text
 
@@ -9,9 +9,10 @@ def clear_popup():
 @st.experimental_dialog("Create Design")
 def create_Design_dialog(Design_type):
     st.write(Design_type)
-    content = st.text_area("Design Description")
+    content = st.text_area("Image Description")
     if st.button("Submit"):
-        st.session_state.create_Design = {"design_type": Design_type, "content": content}
+        brief_class = get_brief_class()
+        st.session_state.create_Design = {"context" : brief_class, "design_type": Design_type, "content": content}
         clear_popup()
         st.rerun()
 

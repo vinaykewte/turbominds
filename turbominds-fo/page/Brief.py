@@ -13,8 +13,8 @@ def show_progress_bar(brief_id):
     backend_base_url = os.getenv('BACKEND_BASE_URL')
     polling_interval = int(os.getenv('POLLING_INTERVAL', 1))  # default to 1 second
     timeout_duration = int(os.getenv('TIMEOUT_DURATION', 30))  # default to 30 seconds
-    
-    start_time = time.time()
+
+    start_time = time.time()    
     
     st.empty()
     st.empty()

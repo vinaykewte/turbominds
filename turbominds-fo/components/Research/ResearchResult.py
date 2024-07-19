@@ -1,6 +1,8 @@
 import streamlit as st
 from streamlit_quill import st_quill
 import json
+from state.brief_session import Brief_State
+from state.session_state import get_brief_class
 
 # Sample JSON array with questions
 sources_json = """[
@@ -39,11 +41,16 @@ sources_json = """[
 sources = json.loads(sources_json)
 
 
-def show():
+def show(result):
     col1, col2 = st.columns([3, 1])  # Create two columns with ratio 3:1
 
     with col1:
-        content = st_quill(value="<b>Streamlit</b> is **really** ***cool***.")
+        content = st_quill(value=result["final_brief"])
+        if st.button("Add to Brief"):
+            # brief_class = get_brief_class()
+            Brief_State.update_research_result(result)
+            Brief_State.add_to_brief(result['final_brief'])
+            # brief_class.update_research_result(result)
     
     with col2:
         st.markdown(

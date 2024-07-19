@@ -1,5 +1,5 @@
 import streamlit as st
-
+from state.session_state import get_brief_class
 def show_popup(button_text):
     st.session_state["popup"] = button_text
 
@@ -8,10 +8,21 @@ def clear_popup():
 
 @st.experimental_dialog("Create Research")
 def create_research_dialog(research_type):
+    options = [
+        "Buying patterns",
+        "Media Consumption Hobbies",
+        "Brand Perception",
+        "Product Preferences",
+        "Customer Satisfaction Levels",
+        "Market Segmentation"
+    ]
+
     st.write(research_type)
+    objective = st.selectbox("Select an option:", options)
     content = st.text_area("Research Description")
     if st.button("Submit"):
-        st.session_state.create_research = {"brief_type": research_type, "content": content}
+        brief_class = get_brief_class()
+        st.session_state.create_research = {"context" : brief_class, "research_type": research_type, "objective":objective, "content": content}
         clear_popup()
         st.rerun()
 
