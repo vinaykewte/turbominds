@@ -1,4 +1,4 @@
-#!/Users/vinay/Data/Projects/turbominds-ai/turbominds-fo/.venv/bin/python3.12
+#!/Users/vinay/Data/Projects/turbominds/turbominds-fo/.venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
