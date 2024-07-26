@@ -40,12 +40,16 @@ def show(result):
         #     """
         # ):
         #     st.button("Upload Data")
-
-        if st.button("Add to Brief"):
-            brief_class = get_brief_class()
-            brief_class.add_to_brief(result['final_brief'])
-            brief_class.update_brief_result(result)
-
+        brief_class = get_brief_class()
+        _col1, _col2 = st.columns([3, 1])
+        with _col1:
+            st.write(brief_class.title)
+        with _col2:
+            if st.button("Add to Brief"):
+                brief_class.add_to_brief(result['final_brief'])
+                brief_class.update_brief_result(result)
+                st.session_state["selected_page"] = "My File"
+                st.rerun()
     with col2:
         # Add custom CSS for the questions list with vertical scroll
         st.markdown(
@@ -58,6 +62,7 @@ def show(result):
                 border-radius: 5px;
             }
             .question-container {
+                margin-top: 0rem;
                 max-height: 70vh; /* Adjust the height as needed */
                 overflow-y: auto;
                 padding-right: 10px; /* Add some padding for better look */

@@ -7,20 +7,22 @@ def clear_popup():
     st.session_state["popup"] = None
 
 @st.experimental_dialog("Create Strategy")
-def create_Strategy_dialog(Strategy_type):
-    st.write(Strategy_type)
-    options = [
+def create_Strategy_dialog(strategy_type):
+    st.write(strategy_type)
+    brief_class = get_brief_class()
+    objective_options = [
         "Awareness",
         "Engagement",
         "Conversion",
         "Re-marketing"
     ]
-
-    objective = st.selectbox("Select an option:", options)
-    content = st.text_area("Strategy Description")
+    brief_options = [brief_class.title]
+    brief = st.selectbox("Choose Brief:", brief_options)
+    objective = st.selectbox("Choose Objective:", objective_options)
+    description = st.text_area("Strategy Description", placeholder="optional")
     if st.button("Submit"):
         brief_class = get_brief_class()
-        st.session_state.create_Strategy = {"context" : brief_class, "strategy_type": Strategy_type, "objective" : objective, "content": content}
+        st.session_state.create_Strategy = {"context" : brief_class.final_brief, "type": strategy_type, "objective" : objective, "description": description}
         clear_popup()
         st.rerun()
 
@@ -68,6 +70,6 @@ def show():
         create_Strategy_dialog(st.session_state["popup"])
 
     st.write("\n\n")
-    st.write("<div class='centered'>💡 Did you know, 1/3 of all marketing budgets are wasted on bad briefs?</div>", unsafe_allow_html=True)
+    st.write("<div class='centered'>💡 A/B testing can improve conversion rates by up to 20%.</div>", unsafe_allow_html=True)
 
     return st.session_state.create_Strategy

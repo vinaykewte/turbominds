@@ -8,7 +8,9 @@ def clear_popup():
 
 @st.experimental_dialog("Create Research")
 def create_research_dialog(research_type):
-    options = [
+    brief_class = get_brief_class()
+    brief_options = [brief_class.title]
+    objective_options = [
         "Buying patterns",
         "Media Consumption Hobbies",
         "Brand Perception",
@@ -18,11 +20,12 @@ def create_research_dialog(research_type):
     ]
 
     st.write(research_type)
-    objective = st.selectbox("Select an option:", options)
-    content = st.text_area("Research Description")
+    brief = st.selectbox("Choose Brief:", brief_options)
+    objective = st.selectbox("Choose Objective:", objective_options)
+    description = st.text_area("Research Description", placeholder="optional")
     if st.button("Submit"):
-        brief_class = get_brief_class()
-        st.session_state.create_research = {"context" : brief_class, "research_type": research_type, "objective":objective, "content": content}
+        st.session_state.create_research = {"context" : brief_class.final_brief, "type": research_type, "objective": objective, "description": description}
+        # st.write(st.session_state.create_research)
         clear_popup()
         st.rerun()
 
@@ -70,6 +73,6 @@ def show():
         create_research_dialog(st.session_state["popup"])
 
     st.write("\n\n")
-    st.write("<div class='centered'>💡 Did you know, 1/3 of all marketing budgets are wasted on bad briefs?</div>", unsafe_allow_html=True)
+    st.write("<div class='centered'>💡 Approximately 90% of the data collected by marketing agencies is unstructured.</div>", unsafe_allow_html=True)
 
     return st.session_state.create_research

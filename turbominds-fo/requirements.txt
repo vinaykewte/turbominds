@@ -3,3 +3,4 @@ streamlit-option-menu
 streamlit-quill
 load_dotenv
 aiohttp
+streamlit-extras

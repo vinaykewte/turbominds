@@ -1,7 +1,7 @@
 # Define a component for the top bar with overlapping circles
 import streamlit as st
 # Define a component for the top bar with overlapping circles
-def top_bar_with_overlapping_images(images, text):
+def top_bar_with_overlapping_images(agents, text):
     st.markdown(
         """
         <style>
@@ -10,7 +10,7 @@ def top_bar_with_overlapping_images(images, text):
             align-items: center;
             padding: 10px;
             margin-bottom: 20px;
-            background-color: #E8ECF9;
+            background-color: #00abb2;
             border-radius: 10px;
         }
         .top-bar .circle {
@@ -40,7 +40,7 @@ def top_bar_with_overlapping_images(images, text):
     st.markdown(
         f"""
         <div class="top-bar">
-            {" ".join([f'<div class="circle"><img src="{image}" alt="Image"></div>' for image in images])}
+            {" ".join([f'<div class="circle"><img src="{agent['image_url']}" alt="Image"></div>' for agent in agents])}
             <div class="text">{text}</div>
         </div>
         """,

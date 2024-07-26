@@ -25,7 +25,7 @@ class Brief_State():
 
     def add_to_brief(self, content):
         if self.final_brief:
-            self.final_brief.append(content)
+            self.final_brief += content
         else:
             self.final_brief = content
 
