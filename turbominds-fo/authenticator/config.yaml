@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    kewtevinay:
+      name: "Vinay Kewte"
+      password: "Vinay123"
+    zanwarsanskar:
+      name: "Sanskar Zanwar"
+      password: "Sanskar123"
+
+cookie:
+  name: "some_cookie_name"
+  key: "some_cookie_key"
+  expiry_days: 30
+
+preauthorized:
+  emails:
+    - vinaykewate13@gmail.com

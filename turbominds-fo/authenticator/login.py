@@ -3,14 +3,38 @@ import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 from streamlit_option_menu import option_menu
-import warnings
+import os
 
 def load_config():
-    config_path = r'authenticator\config.yaml'
+    config_path = os.path.join(os.path.dirname(__file__), 'authenticator', 'config.yaml')
     with open(config_path) as file:
-        return yaml.load(file, Loader=SafeLoader)
-    
+        config = yaml.load(file, Loader=SafeLoader)
+        return config
+
 config = load_config()
+
+def hash_plaintext_passwords(config):
+    plaintext_passwords = {}
+    for user, details in config['credentials']['usernames'].items():
+        if not details['password']:
+            plaintext_passwords[user] = details['password']
+
+    if plaintext_passwords:
+        hashed_passwords = stauth.Hasher(list(plaintext_passwords.values())).generate()
+        for user, hashed_pw in zip(plaintext_passwords.keys(), hashed_passwords):
+            config['credentials']['usernames'][user]['password'] = hashed_pw
+
+    return config
+
+def save_config(config):
+    config_path = os.path.join(os.path.dirname(__file__), 'authenticator', 'config.yaml')
+    with open(config_path, 'w') as file:
+        yaml.dump(config, file, default_flow_style=False)
+
+if 'hashed_done' not in st.session_state:
+    config = hash_plaintext_passwords(config)
+    save_config(config)
+    st.session_state.hashed_done = True
 
 authenticator = stauth.Authenticate(
     config['credentials'],
@@ -55,7 +79,8 @@ else:
         st.warning('Please enter your username and password')
 
     try:
-        if authenticator.register_user(fields=['username', 'password'] , preauthorization=False):
+        if authenticator.register_user(fields=['username', 'password'], preauthorization=False):
+            save_config(config)
             st.success('User registered successfully')
     except Exception as e:
         st.error(str(e))
