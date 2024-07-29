@@ -23,6 +23,10 @@ authenticator = stauth.Authenticate(
 name, authentication_status, username = authenticator.login(fields=['username', 'password'])
 
 if authentication_status:
+    st.empty()
+    st.empty()
+    st.empty()
+
     authenticator.logout('Logout', 'main')
     st.sidebar.success(f'Welcome {name}')
 
@@ -40,7 +44,7 @@ if authentication_status:
         elif selected_option == "Design":
             import page.design as page
         elif selected_option == "My File":
-            import page.myfile as page
+            import page.MyFiles as page
         else:
             st.error("Page not found")
             return
