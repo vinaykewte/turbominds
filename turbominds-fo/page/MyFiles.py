@@ -1,77 +1,101 @@
 import streamlit as st
-from datetime import datetime
 from streamlit_quill import st_quill
-from state.session_state import get_brief_class
-from state.brief_session import Brief_State
+import requests
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from a .env file
+load_dotenv()
 
-brief_class = get_brief_class()
-# Define the sections
-section_1 = "Current File"
-section_2 = "List of Files"
+# Access environment variables
+BACKEND_BASE_URL = os.getenv('BACKEND_BASE_URL', 'http://127.0.0.1:8000')
 
-# Create a default section
-default_section = section_1
-
-# State management for the active section
-if "active_section" not in st.session_state:
-    st.session_state.active_section = default_section
-
-def display_content_section():
-    st.header("My Files")
-    display_brief_content()
-
-def display_brief_content():
-    if brief_class is None:
-        #show no brief created yet with button to add one
-        st.markdown("""
-            <style>
-                .centered {
-                    text-align: center;
-                }
-                
-            </style>
-        """, unsafe_allow_html=True)
-        st.markdown("<h1 class='centered'>Ready to take on the journey for your first autonomous brief creation?</h1>", unsafe_allow_html=True)
-        st.markdown("<h4 class='centered'>Create your marketing brief by going to Brief tab</h4>", unsafe_allow_html=True)
-        
+def list_blueprints(company_id):
+    response = requests.get(f"{BACKEND_BASE_URL}/blueprint", headers={"company-id": company_id})
+    if response.status_code == 200:
+        return response.json()
     else:
-        st.header(brief_class.title.title())
-        st_quill(brief_class.final_brief)
-        if 'image' in st.session_state:
-            st.image(st.session_state.image, use_column_width=True)
+        st.error("Error fetching blueprints")
+        return []
 
-def display_item_list_section(): # here we require to add the state management section, so that we will be having the recurrent brief for the concurrent title.
-    st.header("Item List Section")
-    items = [
-        {"name": "Item 1", "date_updated": datetime(2024, 1, 1), "content": "Details of Item 1"},
-        {"name": "Item 2", "date_updated": datetime(2024, 2, 15), "content": "Details of Item 2"},
-        {"name": "Item 3", "date_updated": datetime(2024, 3, 10), "content": "Details of Item 3"},
-    ]
+def get_blueprint(blueprint_id, company_id):
+    response = requests.get(f"{BACKEND_BASE_URL}/blueprint/{blueprint_id}", headers={"company-id": company_id})
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error("Error fetching blueprint")
+        return None
 
-    item_names = [item["name"] for item in items]
-    selected_item_name = st.selectbox("Select an item to view details:", item_names)
+def update_blueprint(blueprint_id, data, company_id):
+    response = requests.put(f"{BACKEND_BASE_URL}/blueprint/{blueprint_id}", json=data, headers={"company-id": company_id})
+    if response.status_code == 200:
+        st.success("Blueprint updated successfully")
+    else:
+        st.error("Error updating blueprint")
 
-    selected_item = next(item for item in items if item["name"] == selected_item_name)
-    st.write(f"**Name:** {selected_item['name']}")
-    st.write(f"**Date Updated:** {selected_item['date_updated'].strftime('%Y-%m-%d')}")
-    st.write(f"**Content:** {selected_item['content']}")
-    st.write("---")
+def download_blueprint(blueprint_id, company_id):
+    response = requests.get(f"{BACKEND_BASE_URL}/blueprint/{blueprint_id}/download", headers={"company-id": company_id})
+    if response.status_code == 200:
+        return response.content
+    else:
+        st.error("Error downloading blueprint")
+        return None
+
+def display_blueprint_list(company_id):
+    blueprints = list_blueprints(company_id)
+    
+    if blueprints:
+        blueprint_names = [bp["id"] for bp in blueprints]
+        selected_blueprint_id = st.selectbox("Select a Blueprint", blueprint_names)
+        
+        if st.button("View Details"):
+            st.session_state.selected_blueprint_id = selected_blueprint_id
+            st.session_state.active_section = "Blueprint Details"
+            st.experimental_rerun()
+
+def display_blueprint_details(selected_blueprint_id, company_id):
+    blueprint = get_blueprint(selected_blueprint_id, company_id)
+    
+    if blueprint:
+        if st.button("Back to List"):
+            st.session_state.active_section = "List of Files"
+            st.experimental_rerun()
+        
+        st.header(f"Editing Blueprint: {selected_blueprint_id}")
+        final_brief = st_quill(value=blueprint["final_brief"], key=f"quill_{selected_blueprint_id}")
+        
+        if "images" not in st.session_state:
+            st.session_state.images = blueprint["images"]
+
+        st.subheader("Images")
+        for image in st.session_state.images:
+            st.image(image)
+            if st.button(f"Remove {image}"):
+                st.session_state.images.remove(image)
+                st.experimental_rerun()
+
+        if st.button("Save"):
+            blueprint_data = {"final_brief": final_brief, "images": st.session_state.images}
+            update_blueprint(selected_blueprint_id, blueprint_data, company_id)
+        
+        if st.button("Download"):
+            content = download_blueprint(selected_blueprint_id, company_id)
+            if content:
+                st.download_button(label="Download Blueprint", data=content, file_name=f"{selected_blueprint_id}.doc", mime="application/msword")
 
 def show():
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button(section_1):
-            st.session_state.active_section = section_1
-    with col2:
-        if st.button(section_2):
-            st.session_state.active_section = section_2
-    if st.session_state.active_section == section_1:
-        display_content_section()
-    elif st.session_state.active_section == section_2:
-        display_item_list_section()
+    st.title("Blueprint Manager")
+    company_id = st.text_input("Enter Company ID", value="")  # Replace with actual company ID 
 
-    st.info("Use the buttons above to navigate between sections.")
+    if company_id:
+        if "active_section" not in st.session_state:
+            st.session_state.active_section = "List of Files"
+
+        if st.session_state.active_section == "List of Files":
+            display_blueprint_list(company_id)
+        elif st.session_state.active_section == "Blueprint Details":
+            if "selected_blueprint_id" in st.session_state:
+                display_blueprint_details(st.session_state.selected_blueprint_id, company_id)
 
 if __name__ == "__main__":
     show()

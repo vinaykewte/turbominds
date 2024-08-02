@@ -21,18 +21,23 @@ authenticator = stauth.Authenticate(
 )
 
 name, authentication_status, username = authenticator.login(fields=['username', 'password'])
-
+def logout():
+        authenticator.logout('Logout', 'main')
 if authentication_status:
-    st.empty()
-    st.empty()
-    st.empty()
-
-    authenticator.logout('Logout', 'main')
+    # authenticator.logout('Logout', 'main')
     st.sidebar.success(f'Welcome {name}')
 
     with st.sidebar:
-        selected = option_menu("Turbo Minds", ["Brief", 'Research', 'Strategy', 'Design', 'My File'], 
-                               icons=['journal', 'search', 'calendar3-event', 'card-image', 'palette-fill'], menu_icon="fire", default_index=0)
+        selected = option_menu("Turbo Minds", 
+                               ["Brief", 'Research', 'Strategy', 'Design', 'My File'], 
+                               icons=['journal', 'search', 'calendar3-event', 'card-image', 'palette-fill'], 
+                               menu_icon="fire", 
+                               default_index=0)
+        
+        st.write("")  # Add some space between the options and the logout button
+        
+        if st.button("Log Out"):
+            logout()
     
     def load_page(selected_option):
         if selected_option == "Brief":
@@ -49,7 +54,6 @@ if authentication_status:
             st.error("Page not found")
             return
         page.show()
-
     load_page(selected)
 
 else:

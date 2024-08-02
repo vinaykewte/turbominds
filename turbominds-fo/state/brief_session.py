@@ -7,7 +7,8 @@ class Brief_State():
         self.research_result = None
         self.stategy_result = None
         self.design_result = None
-        self.final_brief = None # string 
+        self.final_brief = None # string
+        self.date_created = None 
 
     def update_brief_result(self, brief_result):
         self.brief_result = brief_result 

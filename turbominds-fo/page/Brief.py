@@ -41,12 +41,14 @@ agents = [
 
 # Function to show progress bar and poll API
 def show_progress_bar(brief_id):
-    backend_base_url = os.getenv('BACKEND_BASE_URL')
-    
-    st.empty()
-    st.empty()
-    st.empty()
     ProgressBar.show(agents, "Brief")
+    st.empty()
+    st.empty()
+    st.empty()
+    if st.button("<- Back"): # back button
+        brief_id = None
+        show_brief_grid()
+    backend_base_url = os.getenv('BACKEND_BASE_URL')
     response = requests.get(f"{backend_base_url}/brief/{brief_id}")
     if response.status_code == 200:
         data = response.json()

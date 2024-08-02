@@ -46,15 +46,32 @@ authenticator = stauth.Authenticate(
 
 name, authentication_status, username = authenticator.login(fields=['username', 'password'])
 
+
 if authentication_status:
-    st.empty()
-    authenticator.logout('Logout', 'main')
+    # authenticator.logout('Logout', 'main')
     st.sidebar.success(f'Welcome {name}')
 
     with st.sidebar:
-        selected = option_menu("Turbo Minds", ["Brief", 'Research', 'Strategy', 'Design', 'My File'], 
-                               icons=['journal', 'search', 'calendar3-event', 'card-image', 'palette-fill'], menu_icon="fire", default_index=0)
-    
+        selected = option_menu("Turbo Minds", 
+                               ["Brief", 'Research', 'Strategy', 'Design', 'My File'], 
+                               icons=['journal', 'search', 'calendar3-event', 'card-image', 'palette-fill'], 
+                               menu_icon="fire", 
+                               default_index=0)
+        
+        st.write("")  # Add some space between the options and the logout button
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        if st.button("Log Out"):
+            authenticator.logout('Logout', 'main')
+            st.rerun()
     def load_page(selected_option):
         if selected_option == "Brief":
             import page.Brief as page
@@ -70,7 +87,6 @@ if authentication_status:
             st.error("Page not found")
             return
         page.show()
-
     load_page(selected)
 
 else:
@@ -80,8 +96,7 @@ else:
         st.warning('Please enter your username and password')
 
     try:
-        if authenticator.register_user(fields=['username', 'password'], preauthorization=False):
-            save_config(config)
+        if authenticator.register_user(fields=['username', 'password'] , preauthorization=False):
             st.success('User registered successfully')
     except Exception as e:
         st.error(str(e))
