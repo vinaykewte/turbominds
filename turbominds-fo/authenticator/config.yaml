@@ -1,9 +1,11 @@
 credentials:
   usernames:
     kewtevinay:
+      x_company_id: "63afb664-01a4-4b31-9c4d-0b1b98f06df1"
       name: "Vinay Kewte"
       password: "Vinay123"
     zanwarsanskar:
+      x_company_id: "63afb664-01a4-4b31-9c4d-0b1b98f06df1"
       name: "Sanskar Zanwar"
       password: "Sanskar123"
 

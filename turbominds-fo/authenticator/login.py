@@ -44,7 +44,7 @@ authenticator = stauth.Authenticate(
     config['preauthorized']
 )
 
-name, authentication_status, username = authenticator.login(fields=['username', 'password'])
+name, authentication_status, username, x_company_id = authenticator.login(fields=['username', 'password'])
 
 
 if authentication_status:

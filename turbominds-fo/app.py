@@ -20,11 +20,13 @@ authenticator = stauth.Authenticate(
     config['preauthorized']
 )
 
-name, authentication_status, username = authenticator.login(fields=['username', 'password'])
+name, authentication_status, username, x_company_id = authenticator.login(fields=['username', 'password'])
 def logout():
         authenticator.logout('Logout', 'main')
 if authentication_status:
     # authenticator.logout('Logout', 'main')
+    st.session_state.username = username
+    st.session_state.x_company_id = x_company_id
     st.sidebar.success(f'Welcome {name}')
 
     with st.sidebar:
